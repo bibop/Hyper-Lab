@@ -1,0 +1,94 @@
+{
+  "endpoint": "OPENAI",
+  "model": "gpt-4-1106-preview",
+  "functions": [
+    {
+      "name": "implement_development_plan",
+      "description": "Implements the development plan.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "plan": {
+            "type": "array",
+            "description": "List of development tasks that need to be done to implement the entire plan.",
+            "items": {
+              "type": "object",
+              "description": "Development task that needs to be done to implement the entire plan.",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "description": "Description of the development task that needs to be done to implement the entire plan."
+                },
+                "programmatic_goal": {
+                  "type": "string",
+                  "description": "Detailed description of programmatic goal. Programmatic goal that will determine if a task can be marked as done from a programmatic perspective (this will result in an automated test that is run before the task is sent to you for a review). All details previously specified by user that are important for this task must be included in this programmatic goal."
+                },
+                "user_review_goal": {
+                  "type": "string",
+                  "description": "User review goal that will determine if a task is done or not, but from a user perspective since it will be reviewed by a human."
+                }
+              },
+              "required": [
+                "description",
+                "programmatic_goal",
+                "user_review_goal"
+              ]
+            }
+          }
+        },
+        "required": [
+          "plan"
+        ]
+      }
+    }
+  ],
+  "response": {
+    "plan": [
+      {
+        "description": "Initialize the project and set up the server environment, install core dependencies including Node.js, Express, and Mongoose, and create a basic express server with a `/ping` endpoint.",
+        "programmatic_goal": "A Node.js project with package.json containing Express and Mongoose with an Express server running and responding to GET requests at '/ping' with a 200 status code.",
+        "user_review_goal": "A reviewer can perform a GET request to `/ping` and receive a 200 OK response, confirming server setup."
+      },
+      {
+        "description": "Set up the MongoDB connection using Mongoose and create the initial user schema and model, preparing for authentication and user data storage.",
+        "programmatic_goal": "A successful MongoDB connection is established, and a user Mongoose schema and model are in place and can be used to create and read user documents.",
+        "user_review_goal": "The presence of the user schema in the database can be verified and a dummy user can be stored and retrieved without errors."
+      },
+      {
+        "description": "Implement user authentication system using jsonwebtoken, Passport.js and bcryptjs, including routes for registration, login, and a middleware to protect certain routes.",
+        "programmatic_goal": "User registration and login routes are created and secured with jsonwebtoken, Passport.js and hashed passwords using bcryptjs. Authentication middleware is usable across different routes.",
+        "user_review_goal": "A user can register, log in, and access protected routes only after successful authentication."
+      },
+      {
+        "description": "Develop the autogen agent creation functionality with up to eight agents per project and implement Agent model schemas and controllers.",
+        "programmatic_goal": "Creation of agents is dynamically handled based on user-inputted prompts, with a corresponding MongoDB model for persistence, allowing for creation and retrieval of up to eight agents.",
+        "user_review_goal": "Users can create a project with up to eight specialized autogen agents and view their details stored in the database."
+      },
+      {
+        "description": "Integrate TensorFlow.js for Retrievable and Generative (RAG) capabilities of agents, enabling them to retain memory and learn over time.",
+        "programmatic_goal": "Agents utilize TensorFlow.js to implement RAG capabilities, allowing them to store and access past interactions and evolve based on new data.",
+        "user_review_goal": "Agents show an ability to learn from past data and interactions with improved performance over time."
+      },
+      {
+        "description": "Develop the GUI for agent interaction using React and Redux, including text boxes for agent representation and the ability to upload or generate images for agents using the `sharp` library.",
+        "programmatic_goal": "A React app with Redux state management is created displaying individual text boxes for each agent and their details, with functionality to upload or generate images using `sharp`.",
+        "user_review_goal": "The GUI displays each agent with their names, specializations, and images, allowing users to upload or automatically generate images."
+      },
+      {
+        "description": "Implement real-time collaboration features with Socket.io, allowing concurrent interactions and updates among different user sessions.",
+        "programmatic_goal": "Real-time features are enabled using Socket.io for concurrent and persistent interactions, ensuring updates are communicated across multiple user sessions.",
+        "user_review_goal": "Multiple users can simultaneously interact with the system and see real-time updates of agent interactions."
+      },
+      {
+        "description": "Add multilingual support and a mobile-responsive design using i18next and Bootstrap, ensuring the application caters to a global audience.",
+        "programmatic_goal": "Integration of i18next for translations and Bootstrap for responsive design, with every static text wrapped for translation and the app displaying correctly on various screen sizes.",
+        "user_review_goal": "Users can switch between different languages and access the application on mobile devices with an appropriate layout."
+      },
+      {
+        "description": "Finalize the application by setting up cron jobs for regular performance metric analysis and the preparation of a user manual in English.",
+        "programmatic_goal": "Scheduled cron jobs analyze performance metrics at specified intervals, and a user manual document is prepared and accessible in the application.",
+        "user_review_goal": "Performance metrics are regularly recorded and the user manual can be accessed from within the application."
+      }
+    ]
+  }
+}
