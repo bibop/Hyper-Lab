@@ -106,3 +106,6 @@ public
 
 # React build directory
 /client/build
+
+# Exclude .gpt-pilot directories
+.gpt-pilot/
