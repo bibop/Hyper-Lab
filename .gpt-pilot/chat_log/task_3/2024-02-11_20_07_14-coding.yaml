@@ -1,0 +1,241 @@
+endpoint: OPENAI
+model: gpt-4-1106-preview
+messages:
+- role: system
+  content: You are a full stack software developer who works in a software development agency. You write very modular and
+    clean code. Your job is to implement tasks that your tech lead assigns you. Each task has a description of what needs
+    to be implemented, a programmatic goal that will determine if a task can be marked as done and user-review goal that will
+    determine if a task is done or not but from a user perspective since it will be reviewed by a human.
+- role: user
+  content: "You are working on a App called \"AI_HyperLab\" and you need to write code for the entire app based on the tasks\
+    \ that the tech lead gives you. So that you understand better what you're working on, you're given other specs for \"\
+    AI_HyperLab\" as well.\n\nHere is a high level description of \"AI_HyperLab\":\n```\n\"Hyper-Lab\" is an innovative full-stack\
+    \ web application designed for managing AI projects using an autogen architecture. It combines a modern graphical user\
+    \ interface with advanced functionalities tailored for creating and managing specialized Autogen Agents.\nEnhanced Key\
+    \ Features and Functionalities:\n* Dynamic Creation of Specialized Autogen Agents: Up to eight agents are dynamically\
+    \ created for each project based on user-inputted prompts, including specific roles such as a 'boss' and a 'critic'.\n\
+    * AI-Generated Agent Images: On user request, the software is capable of generating images for each agent, reflecting\
+    \ their functions and roles within the project. This visual representation adds a layer of intuitiveness and personalization\
+    \ to the user experience.\n* RAG Functionality: Each agent is equipped with Retrievable and Generative capabilities, enabling\
+    \ them to retain memory and learn incrementally, improving their performance over time.\n* Persistent and Concurrent Interactions:\
+    \ The platform ensures that interactions between agents are continuous and can occur simultaneously across multiple sessions.\n\
+    * Graphical User Interface (GUI): The GUI displays each agent in individual text boxes, complete with the agent's name,\
+    \ specialization, and their AI-generated or user-uploaded image.\n* User Authentication and Real-Time Collaboration: Various\
+    \ access levels for enhanced security, along with features supporting real-time collaboration on AI projects.\n* Strict\
+    \ Adherence to Autogen Architecture: Exclusively utilizes Autogen architecture without integrating additional AI services\
+    \ or frameworks.\n* Responsive and Multilingual Design: The application is mobile-responsive and supports multiple languages,\
+    \ catering to a global audience.\n* Performance Metrics and Documentation: While specific performance metrics are yet\
+    \ to be established, the application is geared towards efficiency and user-friendliness. A detailed user manual will be\
+    \ provided in English.\nReferences and Resources for Autogen:\n* Autogen Architecture Overview: Microsoft Autogen Blog\n\
+    * Agent AutoBuild Example: Microsoft Autogen Blog - Agent AutoBuild\n* Detailed Articles on Autogen: Available at Microsoft\
+    \ Autogen Blog.\n\n```\n\n\nHere are the technologies that you need to use for this project:\n```\n\n- Node.js\n\n- Express\n\
+    \n- MongoDB\n\n- Mongoose\n\n- jsonwebtoken\n\n- Passport.js\n\n- bcryptjs\n\n- Socket.io\n\n- React\n\n- Redux\n\n- axios\n\
+    \n- Bootstrap\n\n- HTML\n\n- CSS3\n\n- cron\n\n- i18next\n\n- TensorFlow.js\n\n- sharp\n\n```\n\n\n\n\nSo far, this code\
+    \ has been implemented:\n\n**/package.json**\n```\n{\n  \"name\": \"ai_hyperlab\",\n  \"version\": \"1.0.0\",\n  \"description\"\
+    : \"\",\n  \"main\": \"index.js\",\n  \"directories\": {\n    \"test\": \"tests\"\n  },\n  \"scripts\": {\n    \"start\"\
+    : \"node index.js\",\n    \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\"\n  },\n  \"keywords\": [],\n \
+    \ \"author\": \"\",\n  \"license\": \"ISC\",\n  \"dependencies\": {\n    \"bcryptjs\": \"^2.4.3\",\n    \"dotenv\": \"\
+    ^16.4.1\",\n    \"express\": \"^4.18.2\",\n    \"express-validator\": \"^7.0.1\",\n    \"jsonwebtoken\": \"^9.0.2\",\n\
+    \    \"mongoose\": \"^8.1.1\",\n    \"passport\": \"^0.7.0\",\n    \"passport-local\": \"^1.0.0\"\n  }\n}\n\n```\n\n\n\
+    **/index.js**\n```\nconst express = require('express');\nrequire('dotenv').config();\nconst connectDB = require('./config/database');\n\
+    \nconst app = express();\n\n// Database Connection\nconnectDB().catch(err => console.log(err));\n\n// Middleware for parsing\
+    \ JSON and urlencoded form data\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));\n\n// Centralized\
+    \ Routing Module\nrequire('./routes')(app);\napp.use('/test-user', require('./routes/testUserRoutes'));\n\n// Error handling\
+    \ middleware\nconst errorHandler = require('./middleware/errorHandler');\napp.use(errorHandler);\n\nconst PORT = process.env.PORT\
+    \ || 5000;\nconsole.log('Attempting to listen on port', PORT);\napp.listen(PORT, () => {\n  console.log(`Server is running\
+    \ on port ${PORT}`);\n});\n```\n\n\n**config/database.js**\n```\nconst mongoose = require('mongoose');\n\nconst connectDB\
+    \ = async () => {\n  try {\n    await mongoose.connect(process.env.MONGO_URI);\n    console.log('MongoDB Connected');\n\
+    \  } catch (err) {\n    console.error(err.message);\n    process.exit(1);\n  }\n};\n\nmodule.exports = connectDB;\n```\n\
+    \n\n**models/User.js**\n```\n/* The code you provided is defining a Mongoose schema for a user in a Node.js application.\
+    \ */\nconst mongoose = require('mongoose');\nconst Schema = mongoose.Schema;\n\n// User Schema Definition\nconst UserSchema\
+    \ = new Schema({\n  username: {\n    type: String,\n    required: true,\n    unique: true,\n    trim: true\n  },\n  email:\
+    \ {\n    type: String,\n    required: true,\n    unique: true,\n    trim: true,\n    lowercase: true\n  },\n  password:\
+    \ {\n    type: String,\n    required: true\n  },\n  createdAt: {\n    type: Date,\n    default: Date.now\n  },\n  updatedAt:\
+    \ {\n    type: Date,\n    default: Date.now\n  }\n});\n\nconst bcrypt = require('bcryptjs');\n\n// User Schema Definition\n\
+    UserSchema.pre('save', function(next) {\n  if (!this.isModified('password')) {\n    return next();\n  }\n  bcrypt.genSalt(10,\
+    \ (err, salt) => {\n    if (err) return next(err);\n    bcrypt.hash(this.password, salt, (err, hash) => {\n      if (err)\
+    \ return next(err);\n      this.password = hash;\n      next();\n    });\n  });\n});\n\n// Create User Model from the\
+    \ Schema\n// Ensuring proper environment variable usage\nif (!process.env.JWT_SECRET) {\n  throw new Error('Missing JWT_SECRET\
+    \ environment variable in .env file');\n}\n\nconst User = mongoose.model('User', UserSchema);\n\nmodule.exports = User;\n\
+    ```\n\n\n**/.gitignore**\n```\n# .gitignore\n\n# Dependency directories\nnode_modules/\n\n# macOS system files\n.DS_Store\n\
+    \n# Environment variables\n.env\n\n# Production build directory\n/dist\n\n# Local development\n/local\n/.pnp\n.pnp.js\n\
+    \n# Debug logs\nnpm-debug.log*\nyarn-debug.log*\nyarn-error.log*\n\n# Compiled files\n/**/*.js\n/**/*.jsx\n/**/*.ts\n\
+    /**/*.tsx\n/**/*.d.ts\n\n# Editor directories and files\n/.vscode\n/.idea\n/*.sublime-workspace\n/*.sublime-project\n\n\
+    # Log files\n/logs\n*.log\nnpm-debug.log*\nyarn-debug.log*\nyarn-error.log*\n\n# Runtime data\npids\n*.pid\n*.seed\n*.pid.lock\n\
+    \n# Directory for instrumented libs generated by jscoverage/JSCover\n/lib-cov\n\n# Coverage directory used by tools like\
+    \ istanbul\n/coverage\n/.nyc_output\n\n# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)\n\
+    /.grunt\n\n# Optional npm cache directory\n.npm\n\n# Optional eslint cache\n.eslintcache\n\n# TypeScript cache\n*.tsbuildinfo\n\
+    \n# Optional REPL history\n.node_repl_history\n\n# Output of 'npm pack'\n*.tgz\n\n# Yarn Integrity file\n.yarn-integrity\n\
+    \n# parcel-bundler cache (https://parceljs.org/)\n.cache\n.parcel-cache\n\n# Next.js build output\n.next\n.out\n\n# Nuxt.js\
+    \ build / generate output\n.nuxt\ndist\n\n# Gatsby files\n.cache/\npublic\n\n# vuepress build output\n.vuepress/dist\n\
+    \n# Serverless directories\n.serverless/\n\n# FuseBox cache\n.fusebox/\n\n```\n\n\n**/.env**\n```\nMONGO_URI=mongodb://localhost:27017/ai_hyperlab\n\
+    PORT=3000\nJWT_SECRET=XLq0qi3CMAw2ahaXJWlKE3UboN13C2Gt4QFfCu2yPVtIy\n```\n\n\n**routes/users.js**\n```\n// 722 is likely\
+    \ to be a typo or misplaced number, remove it\nconst express = require('express');\nconst router = express.Router();\n\
+    const User = require('../models/User');\n\nrouter.get('/test-db', async (req, res) => {\n  try {\n    const userCount\
+    \ = await User.countDocuments();\n    res.status(200).json({ msg: 'Database connected. User collection count: ' + userCount\
+    \ });\n  } catch (err) {\n    res.status(500).json({ errors: [{ msg: 'Database connection error' }] });\n  }\n});\n\n\
+    router.get('/test-user', async (req, res) => {\n  res.status(200).json({ msg: 'Test User endpoint hit' });\n});\n\nrouter.post('/register-test-user',\
+    \ async (req, res) => {\n  try {\n    let existingUser = await User.findOne({ username: 'testuser' });\n    if (existingUser)\
+    \ {\n      return res.status(409).json({ msg: 'Test user already exists.' });\n    }\n\n    const newUser = new User({\n\
+    \      username: 'testuser',\n      email: 'testuser@example.com',\n      password: 'password123',\n    });\n\n    const\
+    \ savedUser = await newUser.save();\n    \n    res.status(201).json({ id: savedUser._id, msg: 'Test user created successfully.'\
+    \ });\n  } catch (err) {\n    console.error(err);\n    res.status(500).json({ error: 'Server error during test user creation:\
+    \ ' + err.message });\n  }\n});\n\n// Export the router to be used as middleware\nmodule.exports = router;\n```\n\n\n\
+    **routes/index.js**\n```\nconst userRoutes = require('./users');\nconst authRoutes = require('./auth');\n\nmodule.exports\
+    \ = function(app) {\n  app.use('/users', require('./users'));\n  app.use('/auth', require('./auth'));\n\n  app.get('/health',\
+    \ (req, res) => {\n    res.status(200).send('Server healthy');\n  });\n};\n```\n\n\n**routes/auth.js**\n```\nconst express\
+    \ = require('express');\nconst router = express.Router();\nconst User = require('../models/User');\nconst bcrypt = require('bcryptjs');\n\
+    const jwt = require('jsonwebtoken');\n\nconst { check, validationResult } = require('express-validator');\n\nrouter.post('/register',\
+    \ [\n  check('username', 'Username is required').not().isEmpty(),\n  check('email', 'Please include a valid email').isEmail(),\n\
+    \  check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })\n], async (req, res) =>\
+    \ {\n  console.log('Registering user:', req.body);\n  const errors = validationResult(req);\n  if (!errors.isEmpty())\
+    \ {\n    return res.status(400).json({ errors: errors.array() });\n  }\n\n  const { username, email, password } = req.body;\n\
+    \  try {\n    let user = await User.findOne({ email: req.body.email });\n    if (user) {\n      return res.status(400).json({\
+    \ errors: [{ msg: 'User already exists' }] });\n    }\n    user = new User(req.body);\n    await user.save();\n    const\
+    \ payload = {\n      user: {\n        id: user.id\n      }\n    };\n    jwt.sign(\n      payload,\n      process.env.JWT_SECRET,\n\
+    \      { expiresIn: '5h' },\n      (err, token) => {\n        if (err) {\n          console.error(err);\n          return\
+    \ res.status(500).json({ errors: [{ msg: 'Error signing the token' }] });\n        }\n        res.json({ token });\n \
+    \     }\n    );\n  } catch (err) {\n    console.error(err.message);\n    res.status(500).json({ errors: [{ msg: 'Server\
+    \ error' }] });\n  }\n});\n\nrouter.post('/login', async (req, res) => {\n  console.log('Logging in user:', req.body);\n\
+    \  const { email, password } = req.body;\n\n  try {\n    let user = await User.findOne({ email });\n    if (!user) {\n\
+    \      return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });\n    }\n    const isMatch = await bcrypt.compare(password,\
+    \ user.password);\n    if (!isMatch) {\n      return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });\n\
+    \    }\n    const payload = {\n      user: {\n        id: user.id\n      }\n    };\n    jwt.sign(\n      payload,\n  \
+    \    process.env.JWT_SECRET,\n      { expiresIn: '5h' },\n      (err, token) => {\n        if (err) {\n          console.error(err);\n\
+    \          return res.status(500).json({ errors: [{ msg: 'Error signing the token' }] });\n        }\n        res.json({\
+    \ token });\n      }\n    );\n  } catch (err) {\n    console.error(err.message);\n    res.status(500).json({ errors: [{\
+    \ msg: 'Server error' }] });\n  }\n});\n\nmodule.exports = router;\n```\n\n\n**middleware/errorHandler.js**\n```\nconst\
+    \ errorHandler = (err, req, res, next) => {\n  console.error(err.stack);\n  res.status(500).send('Something broke!');\n\
+    };\n\nmodule.exports = errorHandler;\n\n```\n\n\n**routes/testUserRoutes.js**\n```\nconst express = require('express');\n\
+    const router = express.Router();\nconst User = require('../models/User');\nrouter.post('/create', async (req, res) =>\
+    \ {\n  const newUser = new User({ username: 'testuser', email: 'testuser@example.com', password: 'password123' });\n \
+    \ try {\n    const user = await newUser.save();\n    res.status(201).json({ id: user._id, msg: 'Test user successfully\
+    \ created' });\n  } catch (err) {\n    res.status(500).json({ error: err.message });\n  }\n});\nmodule.exports = router;\n\
+    ```\n\n\n\n\nWe've broken the development of this app down to these tasks:\n```\n1. Initialize the project and set up\
+    \ the server environment, install core dependencies including Node.js, Express, and Mongoose, and create a basic express\
+    \ server with a `/ping` endpoint.\n\n2. Set up the MongoDB connection using Mongoose and create the initial user schema\
+    \ and model, preparing for authentication and user data storage.\n\n3. Implement user authentication system using jsonwebtoken,\
+    \ Passport.js and bcryptjs, including routes for registration, login, and a middleware to protect certain routes.\n\n\
+    4. Develop the autogen agent creation functionality with up to eight agents per project and implement Agent model schemas\
+    \ and controllers.\n\n5. Integrate TensorFlow.js for Retrievable and Generative (RAG) capabilities of agents, enabling\
+    \ them to retain memory and learn over time.\n\n6. Develop the GUI for agent interaction using React and Redux, including\
+    \ text boxes for agent representation and the ability to upload or generate images for agents using the `sharp` library.\n\
+    \n7. Implement real-time collaboration features with Socket.io, allowing concurrent interactions and updates among different\
+    \ user sessions.\n\n8. Add multilingual support and a mobile-responsive design using i18next and Bootstrap, ensuring the\
+    \ application caters to a global audience.\n\n9. Finalize the application by setting up cron jobs for regular performance\
+    \ metric analysis and the preparation of a user manual in English.\n\n```\n\nYou are currently working on task #3 with\
+    \ the following description:\n```\nImplement user authentication system using jsonwebtoken, Passport.js and bcryptjs,\
+    \ including routes for registration, login, and a middleware to protect certain routes.\n```\nAll previous tasks are finished\
+    \ and you don't have to work on them.\nAfter all the code is finished, a human developer will check if the app works this\
+    \ way - `A user can register, log in, and access protected routes only after successful authentication.`\n\nNow, tell\
+    \ me all the code that needs to be written to implement ONLY this task and have it fully working and all commands that\
+    \ need to be run to implement this task.\n\n**IMPORTANT**\nRemember, I created an empty folder where I will start writing\
+    \ files that you tell me and that are needed for this app.\nYou do not need to make any automated tests work.\n\nDO NOT\
+    \ specify commands to create any folders or files, they will be created automatically - just specify the relative path\
+    \ to each file that needs to be written.\n\nNever use the port 5000 to run the app, it's reserved."
+- role: assistant
+  content: "To implement task #3, which involves creating an authentication system, you will need to set up Passport.js, implement\
+    \ routes for registration and login, as well as middleware for protected routes. You will also need to modify some existing\
+    \ files to integrate the authentication flows you will develop. Below are the steps, code, and commands you need to use:\n\
+    \n### Steps and Code\n\n1. **Install additional dependencies required for authentication.**\n   Run the following command:\n\
+    \   ```\n   npm install passport passport-local passport-jwt\n   ```\n\n2. **Modify the User model to include a method\
+    \ for password comparison.**\n   In the file `models/User.js`, add a method to the `UserSchema` to compare a given password\
+    \ to the stored hash:\n   ```javascript\n   UserSchema.methods.comparePassword = function(candidatePassword, cb) {\n \
+    \    bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {\n       if (err) return cb(err);\n       cb(null,\
+    \ isMatch);\n     });\n   };\n   ```\n\n3. **Create Passport middleware to handle user authentication.**\n   Under a new\
+    \ folder/directory named `config`, create a file named `passport.js`:\n   **/config/passport.js**\n   ```javascript\n\
+    \   const passport = require('passport');\n   const LocalStrategy = require('passport-local').Strategy;\n   const User\
+    \ = require('../models/User');\n   const bcrypt = require('bcryptjs');\n\n   // Local Strategy for email and password\
+    \ login\n   passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {\n     User.findOne({\
+    \ email: email.toLowerCase() }, (err, user) => {\n       if (err) return done(err);\n       if (!user) return done(null,\
+    \ false, { message: 'Invalid credentials' });\n\n       user.comparePassword(password, (err, isMatch) => {\n         if\
+    \ (err) return done(err);\n         if (isMatch) {\n           return done(null, user);\n         } else {\n         \
+    \  return done(null, false, { message: 'Invalid credentials' });\n         }\n       });\n     });\n   }));\n\n   // Serialize\
+    \ user into the session\n   passport.serializeUser((user, done) => {\n     done(null, user._id);\n   });\n\n   // Deserialize\
+    \ user from the session\n   passport.deserializeUser((id, done) => {\n     User.findById(id, function(err, user) {\n \
+    \      done(err, user);\n     });\n   });\n\n   module.exports = passport; \n   ```\n\n4. **Modify index.js to initialize\
+    \ Passport middleware.**\n   In the `index.js` file, add the following lines before the centralized routing module to\
+    \ initialize Passport:\n   ```javascript\n   const passport = require('./config/passport');\n\n   // Initialize Passport\n\
+    \   app.use(passport.initialize());\n   ```\n\n5. **Create an authentication middleware to protect routes.**\n   Under\
+    \ a new folder/directory named `middleware`, create a file named `auth.js`:\n   **/middleware/auth.js**\n   ```javascript\n\
+    \   const jwt = require('jsonwebtoken');\n   const User = require('../models/User');\n\n   module.exports = (req, res,\
+    \ next) => {\n     const token = req.header('Authorization').replace('Bearer ', '');\n     if (!token) return res.status(401).json({\
+    \ msg: 'No token, authorization denied' });\n\n     try {\n       const decoded = jwt.verify(token, process.env.JWT_SECRET);\n\
+    \       User.findById(decoded.id)\n         .then((user) => {\n           if (!user) {\n             return res.status(401).json({\
+    \ msg: 'User not found' });\n           }\n           req.user = user;\n           next();\n         })\n         .catch((err)\
+    \ => {\n           console.error('something wrong with auth middleware');\n           res.status(500).json({ msg: 'Server\
+    \ Error' });\n         });\n     } catch (e) {\n       console.error('something wrong with auth middleware');\n      \
+    \ res.status(400).json({ msg: 'Token is not valid' });\n     }\n   };\n   ```\n\n6. **Modify the authentication routes\
+    \ to use Passport for login.**\n   In the `routes/auth.js` file, modify the login route to use Passport for authentication:\n\
+    \   ```javascript\n   // Authenticate using Passport LocalStrategy\n   router.post('/login', (req, res, next) => {\n \
+    \    passport.authenticate('local', { session: false }, (err, user, info) => {\n       if (err) return next(err);\n\n\
+    \       if (!user) {\n         return res.status(400).json(info);\n       }\n       const payload = { id: user.id };\n\
+    \       jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '5h' }, (err, token) => {\n         if (err) return res.status(500).json({\
+    \ msg: 'Error signing token' });\n         res.json({ token: 'Bearer ' + token });\n       });\n     })(req, res, next);\n\
+    \   });\n   ```\n\nYou'll also want to remove the `test-user` route registration in `index.js` since it's not part of\
+    \ the production code and seems to be used solely for testing.\n\n```javascript\n// Remove or comment out this line:\n\
+    app.use('/test-user', require('./routes/testUserRoutes'));\n```\n\n### Reminder\n- Ensure that `.env` file contains `JWT_SECRET`\
+    \ and other necessary environment variables.\n- Run the server with `npm start`, making sure that the `.env` file's `PORT`\
+    \ value is not 5000.\n\nThese modifications would complete the task of implementing a user authentication system using\
+    \ jsonwebtoken, Passport.js, and bcryptjs, including routes for registration and login, and the middleware to protect\
+    \ certain routes. With these implementations, a user should be able to register, log in, and access protected routes only\
+    \ after successful authentication."
+- role: user
+  content: "I need to modify file `/models/User.js` that currently looks like this:\n```\n/* The code you provided is defining\
+    \ a Mongoose schema for a user in a Node.js application. */\nconst mongoose = require('mongoose');\nconst Schema = mongoose.Schema;\n\
+    \n// User Schema Definition\nconst UserSchema = new Schema({\n  username: {\n    type: String,\n    required: true,\n\
+    \    unique: true,\n    trim: true\n  },\n  email: {\n    type: String,\n    required: true,\n    unique: true,\n    trim:\
+    \ true,\n    lowercase: true\n  },\n  password: {\n    type: String,\n    required: true\n  },\n  createdAt: {\n    type:\
+    \ Date,\n    default: Date.now\n  },\n  updatedAt: {\n    type: Date,\n    default: Date.now\n  }\n});\n\nconst bcrypt\
+    \ = require('bcryptjs');\n\n// User Schema Definition\nUserSchema.pre('save', function(next) {\n  if (!this.isModified('password'))\
+    \ {\n    return next();\n  }\n  bcrypt.genSalt(10, (err, salt) => {\n    if (err) return next(err);\n    bcrypt.hash(this.password,\
+    \ salt, (err, hash) => {\n      if (err) return next(err);\n      this.password = hash;\n      next();\n    });\n  });\n\
+    });\n\n// Create User Model from the Schema\n// Ensuring proper environment variable usage\nif (!process.env.JWT_SECRET)\
+    \ {\n  throw new Error('Missing JWT_SECRET environment variable in .env file');\n}\n\nconst User = mongoose.model('User',\
+    \ UserSchema);\n\nmodule.exports = User;\n```\nThis file needs to be modified by these instructions:\n---------------------instructions------------------------------\n\
+    Add a method to the 'UserSchema' for comparing a given password with the stored password hash:\nUserSchema.methods.comparePassword\
+    \ = function(candidatePassword, cb) {\n  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {\n    if\
+    \ (err) return cb(err);\n    cb(null, isMatch);\n  });\n};\n----------------------end_of_instructions-----------------------------\n\
+    \nI want you to implement the instructions and show me the exact changes (`diff`) in the file `/models/User.js`. Reply\
+    \ only with the modifications (`diff`) in the following format:\n-----------------------format----------------------------\n\
+    CURRENT_CODE:\n```\n(All lines of code from specific code block in the current file that will be replaced by the code\
+    \ under NEW_CODE.)\n```\nNEW_CODE:\n```\n(All lines of code that will replace the code under CURRENT_CODE. That includes\
+    \ new lines of code and old lines of code that are not being changed but are part of that code block.)\n```\nEND\n------------------------end_of_format---------------------------\n\
+    **IMPORTANT**\nHere are rules how to give good response. You have to strictly follow all rules at all times:\n\nRule #1:\n\
+    This is most important rule and there must never be reason to break this rule!\nWhen the instructions contain hints such\
+    \ as `# .. insert existing code here ...`, it is imperative to interpret and insert the relevant code from the original.\
+    \ Never omit any code that belongs in the new block, and never replace any code with comments such as `// the rest of\
+    \ the code goes here`, '# existing code from another file', or similar, even if the instructions explicitly request it!\n\
+    If the instruction examples reference existing code to be pasted in place, always use the specified code from the previous\
+    \ messages in this conversation instead of copying the comment, as illustrated in the following example:\n------------------------example_1---------------------------\n\
+    Instructions: \"Rename function increase() { // ... existing code } to function inc() { // ... existing code } and increase\
+    \ counter by 10 instead of 1.\"\n------------------------BAD response for example_1:---------------------------\nCURRENT_CODE:\n\
+    ```\nfunction increase() {\n   // ... existing code\n}\n```\nNEW_CODE:\n```\nfunction inc() {\n   // ... existing code\n\
+    \  return value + 10;\n}\n```\n------------------------GOOD response for example_1:---------------------------\n\nCURRENT_CODE:\n\
+    ```\nfunction increase(value) {\n  if (typeof value !== 'number') {\n    throw new Error('Argument must be number');\n\
+    \  }\n  return value + 1;\n}\n```\nNEW_CODE:\n```\nfunction inc(value) {\n  if (typeof value !== 'number') {\n    throw\
+    \ new Error('Argument must be number');\n  }\n  return value + 10;\n}\nEND\n```\n------------------------end_of_example_1---------------------------\n\
+    \nRule #2:\nFor each change that needs to be done, you must show exactly one CURRENT_CODE code block and one NEW_CODE\
+    \ code block. You can think of this as difference (`diff`) between the current implementation and the new implementation.\n\
+    If there are no lines of code that need to be replaced by the NEW_CODE (if the NEW_CODE needs to be added into the CURRENT_CODE),\
+    \ show a couple of lines of code in the CURRENT_CODE before the place where NEW_CODE needs to be added.\nHere is an example\
+    \ of how to add one line `i--;` in the for loop:\n------------------------example_2---------------------------\nCURRENT_CODE:\n\
+    ```\nlet i = 0;\ni++;\nfor (let j = 0; j < 100; j++) {\n```\nNEW_CODE:\n```\nlet i = 0;\ni++;\nfor (let j = 0; j < 100;\
+    \ j++) {\n    i--;\n```\nEND\n------------------------end_of_example_2---------------------------\n\nHere's an example\
+    \ how to add code to the beginning of the file:\n------------------------example_3---------------------------\nCURRENT_CODE:\n\
+    ```\nconst app = express();\nconst bodyParser = require('body-parser');\n```\nNEW_CODE:\n```\nconst express = require('express');\n\
+    const app = express();\nconst bodyParser = require('body-parser');\n```\nEND\n------------------------end_of_example_3---------------------------\n\
+    \nRule #3:\nDo not show the entire file under CURRENT_CODE and NEW_CODE but only the lines that need to be replaced. If\
+    \ any lines should be left as they are in CURRENT_CODE, do not write them.\n\nRule #4:\nYou must output the CURRENT_CODE\
+    \ exactly as it is in the original file, including the indentation from the original code, as it will be used for search-replace,\
+    \ and it should only match the original file in ONE place.\nIn the NEW_CODE, remember to follow the same coding style\
+    \ that is used in the rest of the file. Pay special attention to the indentation of the new code and make sure to include\
+    \ all the required old and new code, without omitting anything.\nPay very close attention to parenthesis and make sure\
+    \ that when CURRENT_CODE is replaced with NEW_CODE there are no extra parenthesis or any parenthesis missing.\n"
+response: "CURRENT_CODE:\n```\n// Create User Model from the Schema\n// Ensuring proper environment variable usage\nif (!process.env.JWT_SECRET)\
+  \ {\n  throw new Error('Missing JWT_SECRET environment variable in .env file');\n}\n\nconst User = mongoose.model('User',\
+  \ UserSchema);\n```\nNEW_CODE:\n```\n// Create User Model from the Schema\n// Ensuring proper environment variable usage\n\
+  if (!process.env.JWT_SECRET) {\n  throw new Error('Missing JWT_SECRET environment variable in .env file');\n}\n\n// Method\
+  \ to compare password for authentication\nUserSchema.methods.comparePassword = function(candidatePassword, cb) {\n  bcrypt.compare(candidatePassword,\
+  \ this.password, (err, isMatch) => {\n    if (err) return cb(err);\n    cb(null, isMatch);\n  });\n};\n\nconst User = mongoose.model('User',\
+  \ UserSchema);\n```\nEND"

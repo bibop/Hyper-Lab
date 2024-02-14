@@ -1,0 +1,37 @@
+{
+  "endpoint": "OPENAI",
+  "model": "gpt-4-1106-preview",
+  "functions": [
+    {
+      "name": "get_documentation_file",
+      "description": "Gets the full content of requested documentation file.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the documentation file that needs to be saved on the disk."
+          },
+          "path": {
+            "type": "string",
+            "description": "Relative path of the documentation file with the file name that needs to be saved."
+          },
+          "content": {
+            "type": "string",
+            "description": "Full content of the documentation file that needs to be saved on the disk."
+          }
+        },
+        "required": [
+          "name",
+          "path",
+          "content"
+        ]
+      }
+    }
+  ],
+  "response": {
+    "name": "README.md",
+    "path": "/README.md",
+    "content": "# AI_HyperLab\n\nAI_HyperLab is a revolutionary full-stack web application designed for the seamless management of AI projects. It embraces an autogen architecture to provide a collection of enhanced features for creating, training, and managing Autogen Agents.\n\n## Features\n\n- **Dynamic Specialized Autogen Agents**: Up to eight specialized agents can be dynamically spawned for each project, with distinct roles like 'boss' and 'critic'.\n- **AI-Generated Agent Imagery**: Custom images for each agent are generated based upon their roles to add a personal touch.\n- **RAG Functionality**: Agents have Retrievable and Generative capabilities for memory retention and incremental learning.\n- **Persistent & Concurrent Interactions**: Continuous and concurrent interactions between agents across sessions.\n- **GUI**: Intuitive graphical user interface showcasing agent details and images.\n- **Authentication & Real-Time Collaboration**: Secure multi-user support with real-time collaboration features.\n- **Autogen Architecture**: Strict utilization of Autogen architecture principles.\n- **Responsive Multilingual Support**: Compatibility with various device sizes and multiple languages.\n- **Performance Metrics & Documentation**: A forthcoming manual for optimal use and clarity on performance measures.\n\n## Technology Stack\n\n- Backend: Node.js, Express, MongoDB, Mongoose\n- Authentication: jsonwebtoken, Passport.js, bcryptjs\n- Real-time Communication: Socket.io\n- Frontend: React, Redux, axios, Bootstrap\n- Styling: HTML, CSS3\n- Scheduling: cron\n- Internationalization: i18next\n- AI Processing: TensorFlow.js\n- Image Processing: sharp\n\n## Installation\n\nMake sure to have Node.js and MongoDB installed on your system.\n\n1. Clone the repository\n2. Install dependencies:\n   ```sh\n   npm install\n   ```\n3. Set up the environment variables in `.env` file as per the example in `.env.example`\n4. Start the application:\n   ```sh\n   npm start\n   ```\n\n## Usage\n\nAfter starting the server, navigate to the provided local server URL, usually `http://localhost:PORT` where `PORT` is defined in your `.env` file.\n\n## Documentation\n\nFor more information on using AI_HyperLab, refer to the in-depth user manual (to be provided).\n\n## Autogen Resources\n\nRefer to these articles and blog posts for more details on Autogen architecture and implementation:\n\n- [Autogen Architecture Overview](https://autogen.microsoft.com/blog/overview)\n- [Agent AutoBuild Example](https://autogen.microsoft.com/blog/agent-autobuild)\n- [More Articles on Autogen](https://autogen.microsoft.com/blog/articles)\n\n## License\n\nThis project is licensed under the ISC License. See the [LICENSE](LICENSE) file for details.\n\n## Acknowledgments\n\nSpecial thanks to the creators and contributors towards the development and maintenance of the Autogen framework and the associated technologies listed.\n"
+  }
+}

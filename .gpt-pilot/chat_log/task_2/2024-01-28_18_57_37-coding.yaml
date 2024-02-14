@@ -1,0 +1,92 @@
+endpoint: OPENAI
+model: gpt-4-1106-preview
+messages:
+- role: system
+  content: You are a full stack software developer who works in a software development agency. You write very modular and
+    clean code. Your job is to implement tasks that your tech lead assigns you. Each task has a description of what needs
+    to be implemented, a programmatic goal that will determine if a task can be marked as done and user-review goal that will
+    determine if a task is done or not but from a user perspective since it will be reviewed by a human.
+- role: user
+  content: "You are working on a App called \"AI_HyperLab\" and you need to write code for the entire app based on the tasks\
+    \ that the tech lead gives you. So that you understand better what you're working on, you're given other specs for \"\
+    AI_HyperLab\" as well.\n\nHere is a high level description of \"AI_HyperLab\":\n```\n\"Hyper-Lab\" is an innovative full-stack\
+    \ web application designed for managing AI projects using an autogen architecture. It combines a modern graphical user\
+    \ interface with advanced functionalities tailored for creating and managing specialized Autogen Agents.\nEnhanced Key\
+    \ Features and Functionalities:\n* Dynamic Creation of Specialized Autogen Agents: Up to eight agents are dynamically\
+    \ created for each project based on user-inputted prompts, including specific roles such as a 'boss' and a 'critic'.\n\
+    * AI-Generated Agent Images: On user request, the software is capable of generating images for each agent, reflecting\
+    \ their functions and roles within the project. This visual representation adds a layer of intuitiveness and personalization\
+    \ to the user experience.\n* RAG Functionality: Each agent is equipped with Retrievable and Generative capabilities, enabling\
+    \ them to retain memory and learn incrementally, improving their performance over time.\n* Persistent and Concurrent Interactions:\
+    \ The platform ensures that interactions between agents are continuous and can occur simultaneously across multiple sessions.\n\
+    * Graphical User Interface (GUI): The GUI displays each agent in individual text boxes, complete with the agent's name,\
+    \ specialization, and their AI-generated or user-uploaded image.\n* User Authentication and Real-Time Collaboration: Various\
+    \ access levels for enhanced security, along with features supporting real-time collaboration on AI projects.\n* Strict\
+    \ Adherence to Autogen Architecture: Exclusively utilizes Autogen architecture without integrating additional AI services\
+    \ or frameworks.\n* Responsive and Multilingual Design: The application is mobile-responsive and supports multiple languages,\
+    \ catering to a global audience.\n* Performance Metrics and Documentation: While specific performance metrics are yet\
+    \ to be established, the application is geared towards efficiency and user-friendliness. A detailed user manual will be\
+    \ provided in English.\nReferences and Resources for Autogen:\n* Autogen Architecture Overview: Microsoft Autogen Blog\n\
+    * Agent AutoBuild Example: Microsoft Autogen Blog - Agent AutoBuild\n* Detailed Articles on Autogen: Available at Microsoft\
+    \ Autogen Blog.\n\n```\n\n\nHere are the technologies that you need to use for this project:\n```\n\n- Node.js\n\n- Express\n\
+    \n- MongoDB\n\n- Mongoose\n\n- jsonwebtoken\n\n- Passport.js\n\n- bcryptjs\n\n- Socket.io\n\n- React\n\n- Redux\n\n- axios\n\
+    \n- Bootstrap\n\n- HTML\n\n- CSS3\n\n- cron\n\n- i18next\n\n- TensorFlow.js\n\n- sharp\n\n```\n\n\n\n\nSo far, this code\
+    \ has been implemented:\n\n**/package.json**\n```\n{\n  \"name\": \"ai_hyperlab\",\n  \"version\": \"1.0.0\",\n  \"description\"\
+    : \"\",\n  \"main\": \"index.js\",\n  \"directories\": {\n    \"test\": \"tests\"\n  },\n  \"scripts\": {\n    \"test\"\
+    : \"echo \\\"Error: no test specified\\\" && exit 1\"\n  },\n  \"keywords\": [],\n  \"author\": \"\",\n  \"license\":\
+    \ \"ISC\",\n  \"dependencies\": {\n    \"express\": \"^4.18.2\",\n    \"mongoose\": \"^8.1.1\"\n  }\n}\n\n```\n\n\n**/index.js**\n\
+    ```\nconst express = require('express');\nconst mongoose = require('mongoose');\n\nconst app = express();\nconst port\
+    \ = process.env.PORT || 3000;\n\napp.get('/ping', (req, res) => {\n  res.status(200).send('OK');\n});\n\napp.listen(port,\
+    \ () => {\n  console.log(`Server is running on port ${port}`);\n});\n```\n\n\n\n\nWe've broken the development of this\
+    \ app down to these tasks:\n```\n1. Initialize the project and set up the server environment, install core dependencies\
+    \ including Node.js, Express, and Mongoose, and create a basic express server with a `/ping` endpoint.\n\n2. Set up the\
+    \ MongoDB connection using Mongoose and create the initial user schema and model, preparing for authentication and user\
+    \ data storage.\n\n3. Implement user authentication system using jsonwebtoken, Passport.js and bcryptjs, including routes\
+    \ for registration, login, and a middleware to protect certain routes.\n\n4. Develop the autogen agent creation functionality\
+    \ with up to eight agents per project and implement Agent model schemas and controllers.\n\n5. Integrate TensorFlow.js\
+    \ for Retrievable and Generative (RAG) capabilities of agents, enabling them to retain memory and learn over time.\n\n\
+    6. Develop the GUI for agent interaction using React and Redux, including text boxes for agent representation and the\
+    \ ability to upload or generate images for agents using the `sharp` library.\n\n7. Implement real-time collaboration features\
+    \ with Socket.io, allowing concurrent interactions and updates among different user sessions.\n\n8. Add multilingual support\
+    \ and a mobile-responsive design using i18next and Bootstrap, ensuring the application caters to a global audience.\n\n\
+    9. Finalize the application by setting up cron jobs for regular performance metric analysis and the preparation of a user\
+    \ manual in English.\n\n```\n\nYou are currently working on task #2 with the following description:\n```\nSet up the MongoDB\
+    \ connection using Mongoose and create the initial user schema and model, preparing for authentication and user data storage.\n\
+    ```\nAll previous tasks are finished and you don't have to work on them.\nAfter all the code is finished, a human developer\
+    \ will check if the app works this way - `The presence of the user schema in the database can be verified and a dummy\
+    \ user can be stored and retrieved without errors.`\n\nNow, tell me all the code that needs to be written to implement\
+    \ ONLY this task and have it fully working and all commands that need to be run to implement this task.\n\n**IMPORTANT**\n\
+    Remember, I created an empty folder where I will start writing files that you tell me and that are needed for this app.\n\
+    You do not need to make any automated tests work.\n\nDO NOT specify commands to create any folders or files, they will\
+    \ be created automatically - just specify the relative path to each file that needs to be written.\n\nNever use the port\
+    \ 5000 to run the app, it's reserved."
+response: "To complete task #2, you will need to set up the MongoDB connection and create the initial user schema and model\
+  \ using Mongoose. Below is the code needed for this task, along with the commands to run.\n\nFirstly, you will have to install\
+  \ MongoDB and Mongoose if you haven't done so already. Assuming you have Node.js installed, you can do this by running the\
+  \ following command:\n\n```sh\nnpm install mongoose\n```\n\nThen, you will need to update your project with the following\
+  \ code:\n\n**/models/User.js**\n```javascript\nconst mongoose = require('mongoose');\nconst Schema = mongoose.Schema;\n\n\
+  // User Schema Definition\nconst UserSchema = new Schema({\n  username: {\n    type: String,\n    required: true,\n    unique:\
+  \ true,\n    trim: true\n  },\n  email: {\n    type: String,\n    required: true,\n    unique: true,\n    trim: true,\n\
+  \    lowercase: true\n  },\n  password: {\n    type: String,\n    required: true\n  },\n  createdAt: {\n    type: Date,\n\
+  \    default: Date.now\n  },\n  updatedAt: {\n    type: Date,\n    default: Date.now\n  }\n});\n\n// Create User Model from\
+  \ the Schema\nconst User = mongoose.model('User', UserSchema);\n\nmodule.exports = User;\n```\n\n**/config/database.js**\n\
+  ```javascript\nmodule.exports = {\n  mongoURI: 'YOUR_MONGODB_URI' // Replace with your own MongoDB URI\n};\n```\n\n**/index.js**\n\
+  ```javascript\nconst express = require('express');\nconst mongoose = require('mongoose');\nconst databaseConfig = require('./config/database');\n\
+  \nconst app = express();\nconst port = process.env.PORT || 3000;\n\n// Database Connection\nmongoose.connect(databaseConfig.mongoURI,\
+  \ { useNewUrlParser: true, useUnifiedTopology: true })\n.then(() => console.log('MongoDB Connected'))\n.catch(err => console.log(err));\n\
+  \n// Requiring User model\nconst User = require('./models/User');\n\napp.get('/ping', (req, res) => {\n  res.status(200).send('OK');\n\
+  });\n\n// ...\n\napp.listen(port, () => {\n  console.log(`Server is running on port ${port}`);\n});\n```\n\nMake sure to\
+  \ replace `'YOUR_MONGODB_URI'` in the database.js file with your actual MongoDB URI.\n\nFinally, after you have the MongoDB\
+  \ connection and user schema set up, you might want to create a test endpoint to verify that a dummy user can be stored\
+  \ and retrieved without errors.\n\nYou can modify the existing `/index.js` to include this test endpoint as shown below:\n\
+  \n**/index.js** (Appending to the existing file)\n```javascript\n// ...\n\n// Test Endpoint to Create and Retrieve a Dummy\
+  \ User\napp.get('/test-user', async (req, res) => {\n  try {\n    // Create a dummy user\n    const dummyUser = new User({\n\
+  \      username: 'testuser',\n      email: 'testuser@example.com',\n      password: 'password' // Note: In production, this\
+  \ would be hashed\n    });\n\n    // Save dummy user in the database\n    await dummyUser.save();\n\n    // Retrieve the\
+  \ dummy user from the database\n    const foundUser = await User.findOne({ username: 'testuser' });\n    res.status(200).json(foundUser);\n\
+  \  } catch (error) {\n    res.status(500).send(error);\n  }\n});\n\n// ...\n```\n\nThis test endpoint is for development\
+  \ purposes and should not be included in the production code. It allows you to quickly verify that a user can be created\
+  \ and fetched from the MongoDB database. Don't forget that in a real application, passwords should be hashed before storing\
+  \ them in the database.\n\nWith this setup, you'll be ready to check off task #2. After running your server with `npm start`\
+  \ or `node index.js`, you can navigate to the `/test-user` endpoint in your browser or use a tool like Postman to create\
+  \ and fetch a dummy user. If the user is created and retrieved successfully, the task is completed from a programmatic perspective."

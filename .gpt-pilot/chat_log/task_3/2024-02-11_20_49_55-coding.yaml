@@ -1,0 +1,307 @@
+endpoint: OPENAI
+model: gpt-4-1106-preview
+messages:
+- role: system
+  content: You are a full stack software developer who works in a software development agency. You write very modular and
+    clean code. Your job is to implement tasks that your tech lead assigns you. Each task has a description of what needs
+    to be implemented, a programmatic goal that will determine if a task can be marked as done and user-review goal that will
+    determine if a task is done or not but from a user perspective since it will be reviewed by a human.
+- role: user
+  content: "You are working on a App called \"AI_HyperLab\" and you need to write code for the entire application.\n\nHere\
+    \ is a high level description of \"AI_HyperLab\":\n```\n\"Hyper-Lab\" is an innovative full-stack web application designed\
+    \ for managing AI projects using an autogen architecture. It combines a modern graphical user interface with advanced\
+    \ functionalities tailored for creating and managing specialized Autogen Agents.\nEnhanced Key Features and Functionalities:\n\
+    * Dynamic Creation of Specialized Autogen Agents: Up to eight agents are dynamically created for each project based on\
+    \ user-inputted prompts, including specific roles such as a 'boss' and a 'critic'.\n* AI-Generated Agent Images: On user\
+    \ request, the software is capable of generating images for each agent, reflecting their functions and roles within the\
+    \ project. This visual representation adds a layer of intuitiveness and personalization to the user experience.\n* RAG\
+    \ Functionality: Each agent is equipped with Retrievable and Generative capabilities, enabling them to retain memory and\
+    \ learn incrementally, improving their performance over time.\n* Persistent and Concurrent Interactions: The platform\
+    \ ensures that interactions between agents are continuous and can occur simultaneously across multiple sessions.\n* Graphical\
+    \ User Interface (GUI): The GUI displays each agent in individual text boxes, complete with the agent's name, specialization,\
+    \ and their AI-generated or user-uploaded image.\n* User Authentication and Real-Time Collaboration: Various access levels\
+    \ for enhanced security, along with features supporting real-time collaboration on AI projects.\n* Strict Adherence to\
+    \ Autogen Architecture: Exclusively utilizes Autogen architecture without integrating additional AI services or frameworks.\n\
+    * Responsive and Multilingual Design: The application is mobile-responsive and supports multiple languages, catering to\
+    \ a global audience.\n* Performance Metrics and Documentation: While specific performance metrics are yet to be established,\
+    \ the application is geared towards efficiency and user-friendliness. A detailed user manual will be provided in English.\n\
+    References and Resources for Autogen:\n* Autogen Architecture Overview: Microsoft Autogen Blog\n* Agent AutoBuild Example:\
+    \ Microsoft Autogen Blog - Agent AutoBuild\n* Detailed Articles on Autogen: Available at Microsoft Autogen Blog.\n\n```\n\
+    \nHere are the technologies that you need to use for this project:\n```\n- Node.js\n- Express\n- MongoDB\n- Mongoose\n\
+    - jsonwebtoken\n- Passport.js\n- bcryptjs\n- Socket.io\n- React\n- Redux\n- axios\n- Bootstrap\n- HTML\n- CSS3\n- cron\n\
+    - i18next\n- TensorFlow.js\n- sharp\n```\n\n\nDevelopment process of this app was split into smaller tasks. Here is the\
+    \ list of all tasks:\n```\n1. Initialize the project and set up the server environment, install core dependencies including\
+    \ Node.js, Express, and Mongoose, and create a basic express server with a `/ping` endpoint.\n\n2. Set up the MongoDB\
+    \ connection using Mongoose and create the initial user schema and model, preparing for authentication and user data storage.\n\
+    \n3. Implement user authentication system using jsonwebtoken, Passport.js and bcryptjs, including routes for registration,\
+    \ login, and a middleware to protect certain routes.\n\n4. Develop the autogen agent creation functionality with up to\
+    \ eight agents per project and implement Agent model schemas and controllers.\n\n5. Integrate TensorFlow.js for Retrievable\
+    \ and Generative (RAG) capabilities of agents, enabling them to retain memory and learn over time.\n\n6. Develop the GUI\
+    \ for agent interaction using React and Redux, including text boxes for agent representation and the ability to upload\
+    \ or generate images for agents using the `sharp` library.\n\n7. Implement real-time collaboration features with Socket.io,\
+    \ allowing concurrent interactions and updates among different user sessions.\n\n8. Add multilingual support and a mobile-responsive\
+    \ design using i18next and Bootstrap, ensuring the application caters to a global audience.\n\n9. Finalize the application\
+    \ by setting up cron jobs for regular performance metric analysis and the preparation of a user manual in English.\n\n\
+    ```\nYou are currently working on task \"Implement user authentication system using jsonwebtoken, Passport.js and bcryptjs,\
+    \ including routes for registration, login, and a middleware to protect certain routes.\" and you have to focus only on\
+    \ that task.\n\n\nA part of the app is already finished.Here are files that are currently implemented:\n\n**/package.json**\n\
+    ```\n{\n  \"name\": \"ai_hyperlab\",\n  \"version\": \"1.0.0\",\n  \"description\": \"\",\n  \"main\": \"index.js\",\n\
+    \  \"directories\": {\n    \"test\": \"tests\"\n  },\n  \"scripts\": {\n    \"start\": \"node index.js\",\n    \"test\"\
+    : \"echo \\\"Error: no test specified\\\" && exit 1\"\n  },\n  \"keywords\": [],\n  \"author\": \"\",\n  \"license\":\
+    \ \"ISC\",\n  \"dependencies\": {\n    \"bcryptjs\": \"^2.4.3\",\n    \"dotenv\": \"^16.4.1\",\n    \"express\": \"^4.18.2\"\
+    ,\n    \"express-validator\": \"^7.0.1\",\n    \"jsonwebtoken\": \"^9.0.2\",\n    \"mongoose\": \"^8.1.1\",\n    \"passport\"\
+    : \"^0.7.0\",\n    \"passport-jwt\": \"^4.0.1\",\n    \"passport-local\": \"^1.0.0\"\n  }\n}\n\n```\n\n**/index.js**\n\
+    ```\nconst express = require('express');\nrequire('dotenv').config();\nconst connectDB = require('./config/database');\n\
+    \nconst app = express();\n\n// Database Connection\nconnectDB().catch(err => console.log(err));\n\nconst passport = require('./config/passport');\n\
+    \n// Initialize Passport\napp.use(passport.initialize());\n\n// Middleware for parsing JSON and urlencoded form data\n\
+    app.use(express.json());\napp.use(express.urlencoded({ extended: true }));\n\n// Centralized Routing Module\nrequire('./routes')(app);\n\
+    // app.use('/test-user', require('./routes/testUserRoutes'));\n\n// Error handling middleware\nconst errorHandler = require('./middleware/errorHandler');\n\
+    app.use(errorHandler);\n\nconst PORT = process.env.PORT || 5000;\nconsole.log('Attempting to listen on port', PORT);\n\
+    app.listen(PORT, () => {\n  console.log(`Server is running on port ${PORT}`);\n});\n```\n\n**config/database.js**\n```\n\
+    const mongoose = require('mongoose');\n\nconst connectDB = async () => {\n  try {\n    await mongoose.connect(process.env.MONGO_URI);\n\
+    \    console.log('MongoDB Connected');\n  } catch (err) {\n    console.error(err.message);\n    process.exit(1);\n  }\n\
+    };\n\nmodule.exports = connectDB;\n```\n\n**models/User.js**\n```\n/* The code you provided is defining a Mongoose schema\
+    \ for a user in a Node.js application. */\nconst mongoose = require('mongoose');\nconst Schema = mongoose.Schema;\n\n\
+    // User Schema Definition\nconst UserSchema = new Schema({\n  username: {\n    type: String,\n    required: true,\n  \
+    \  unique: true,\n    trim: true\n  },\n  email: {\n    type: String,\n    required: true,\n    unique: true,\n    trim:\
+    \ true,\n    lowercase: true\n  },\n  password: {\n    type: String,\n    required: true\n  },\n  createdAt: {\n    type:\
+    \ Date,\n    default: Date.now\n  },\n  updatedAt: {\n    type: Date,\n    default: Date.now\n  }\n});\n\nconst bcrypt\
+    \ = require('bcryptjs');\n\n// User Schema Definition\nUserSchema.pre('save', function(next) {\n  if (!this.isModified('password'))\
+    \ {\n    return next();\n  }\n  bcrypt.genSalt(10, (err, salt) => {\n    if (err) return next(err);\n    bcrypt.hash(this.password,\
+    \ salt, (err, hash) => {\n      if (err) return next(err);\n      this.password = hash;\n      next();\n    });\n  });\n\
+    });\n\n// Create User Model from the Schema\n// Ensuring proper environment variable usage\nif (!process.env.JWT_SECRET)\
+    \ {\n  throw new Error('Missing JWT_SECRET environment variable in .env file');\n}\n\n// Method to compare password for\
+    \ authentication\nUserSchema.methods.comparePassword = function(candidatePassword, cb) {\n  bcrypt.compare(candidatePassword,\
+    \ this.password, (err, isMatch) => {\n    if (err) return cb(err);\n    cb(null, isMatch);\n  });\n};\n\nconst User =\
+    \ mongoose.model('User', UserSchema);\n\nmodule.exports = User;\n```\n\n**/.gitignore**\n```\n# .gitignore\n\n# Dependency\
+    \ directories\nnode_modules/\n\n# macOS system files\n.DS_Store\n\n# Environment variables\n.env\n\n# Production build\
+    \ directory\n/dist\n\n# Local development\n/local\n/.pnp\n.pnp.js\n\n# Debug logs\nnpm-debug.log*\nyarn-debug.log*\nyarn-error.log*\n\
+    \n# Compiled files\n/**/*.js\n/**/*.jsx\n/**/*.ts\n/**/*.tsx\n/**/*.d.ts\n\n# Editor directories and files\n/.vscode\n\
+    /.idea\n/*.sublime-workspace\n/*.sublime-project\n\n# Log files\n/logs\n*.log\nnpm-debug.log*\nyarn-debug.log*\nyarn-error.log*\n\
+    \n# Runtime data\npids\n*.pid\n*.seed\n*.pid.lock\n\n# Directory for instrumented libs generated by jscoverage/JSCover\n\
+    /lib-cov\n\n# Coverage directory used by tools like istanbul\n/coverage\n/.nyc_output\n\n# Grunt intermediate storage\
+    \ (https://gruntjs.com/creating-plugins#storing-task-files)\n/.grunt\n\n# Optional npm cache directory\n.npm\n\n# Optional\
+    \ eslint cache\n.eslintcache\n\n# TypeScript cache\n*.tsbuildinfo\n\n# Optional REPL history\n.node_repl_history\n\n#\
+    \ Output of 'npm pack'\n*.tgz\n\n# Yarn Integrity file\n.yarn-integrity\n\n# parcel-bundler cache (https://parceljs.org/)\n\
+    .cache\n.parcel-cache\n\n# Next.js build output\n.next\n.out\n\n# Nuxt.js build / generate output\n.nuxt\ndist\n\n# Gatsby\
+    \ files\n.cache/\npublic\n\n# vuepress build output\n.vuepress/dist\n\n# Serverless directories\n.serverless/\n\n# FuseBox\
+    \ cache\n.fusebox/\n\n```\n\n**/.env**\n```\nMONGO_URI=mongodb://localhost:27017/ai_hyperlab\nPORT=3000\nJWT_SECRET=XLq0qi3CMAw2ahaXJWlKE3UboN13C2Gt4QFfCu2yPVtIy\n\
+    JWT_REFRESH_SECRET=pkz1q4DJ5tiaBTZohoAD5wwNnPDqQAmGscBH5aO0eBvR\n```\n\n**routes/users.js**\n```\n// 722 is likely to\
+    \ be a typo or misplaced number, remove it\nconst express = require('express');\nconst router = express.Router();\nconst\
+    \ User = require('../models/User');\n\nrouter.get('/test-db', async (req, res) => {\n  try {\n    const userCount = await\
+    \ User.countDocuments();\n    res.status(200).json({ msg: 'Database connected. User collection count: ' + userCount });\n\
+    \  } catch (err) {\n    res.status(500).json({ errors: [{ msg: 'Database connection error' }] });\n  }\n});\n\nrouter.get('/test-user',\
+    \ async (req, res) => {\n  res.status(200).json({ msg: 'Test User endpoint hit' });\n});\n\nrouter.post('/register-test-user',\
+    \ async (req, res) => {\n  try {\n    let existingUser = await User.findOne({ username: 'testuser' });\n    if (existingUser)\
+    \ {\n      return res.status(409).json({ msg: 'Test user already exists.' });\n    }\n\n    const newUser = new User({\n\
+    \      username: 'testuser',\n      email: 'testuser@example.com',\n      password: 'password123',\n    });\n\n    const\
+    \ savedUser = await newUser.save();\n    \n    res.status(201).json({ id: savedUser._id, msg: 'Test user created successfully.'\
+    \ });\n  } catch (err) {\n    console.error(err);\n    res.status(500).json({ error: 'Server error during test user creation:\
+    \ ' + err.message });\n  }\n});\n\n// Export the router to be used as middleware\nmodule.exports = router;\n```\n\n**routes/index.js**\n\
+    ```\nconst userRoutes = require('./users');\nconst authRoutes = require('./auth');\nconst apiRoutes = require('./api');\
+    \  // Added line for requiring API routes\n\nmodule.exports = function(app) {\n  app.use('/users', userRoutes);\n  app.use('/auth',\
+    \ authRoutes);\n  app.use('/api', apiRoutes);  // Added line to use the API routes\n\n  app.get('/health', (req, res)\
+    \ => {\n    res.status(200).send('Server healthy');\n  });\n};\n```\n\n**routes/auth.js**\n```\nconst express = require('express');\n\
+    const router = express.Router();\nconst { check, validationResult } = require('express-validator');\nconst userController\
+    \ = require('../controller/userController');\n\nrouter.post('/register', [\n  check('username', 'Username is required').not().isEmpty(),\n\
+    \  check('email', 'Please include a valid email').isEmail(),\n  check('password', 'Please enter a password with 6 or more\
+    \ characters').isLength({ min: 6 })\n], userController.registerUser);\n\nrouter.post('/login', [\n  check('email', 'Please\
+    \ include a valid email').isEmail(),\n  check('password', 'Password is required').exists()\n], (req, res, next) => {\n\
+    \  const errors = validationResult(req);\n  if (!errors.isEmpty()) {\n    return res.status(400).json({ errors: errors.array()\
+    \ });\n  }\n  \n  passport.authenticate('local', { session: false }, (err, user, info) => {\n    if (err || !user) {\n\
+    \      return res.status(400).json({\n        message: info ? info.message : 'Login failed',\n        user : user\n  \
+    \    });\n    }\n\n    req.login(user, { session: false }, (err) => {\n      if (err) res.send(err);\n\n      // Call\
+    \ our loginUser function which handles the JWT creation\n      return userController.loginUser(req, res);\n    });\n \
+    \ })(req, res, next);\n});\n\nmodule.exports = router;\n```\n\n**middleware/errorHandler.js**\n```\nconst errorHandler\
+    \ = (err, req, res, next) => {\n  console.error(err.stack);\n  res.status(500).json({\n    errors: [{\n      msg: 'Internal\
+    \ Server Error',\n      error: (process.env.NODE_ENV === 'development') ? err.stack : {}\n    }]\n  });\n};\n\nmodule.exports\
+    \ = errorHandler;\n\n```\n\n**routes/testUserRoutes.js**\n```\nconst express = require('express');\nconst router = express.Router();\n\
+    const User = require('../models/User');\nrouter.post('/create', async (req, res) => {\n  const newUser = new User({ username:\
+    \ 'testuser', email: 'testuser@example.com', password: 'password123' });\n  try {\n    const user = await newUser.save();\n\
+    \    res.status(201).json({ id: user._id, msg: 'Test user successfully created' });\n  } catch (err) {\n    res.status(500).json({\
+    \ error: err.message });\n  }\n});\nmodule.exports = router;\n```\n\n**config/passport.js**\n```\nconst passport = require('passport');\n\
+    const LocalStrategy = require('passport-local').Strategy;\nconst User = require('../models/User');\n\npassport.use(new\
+    \ LocalStrategy({ usernameField: 'email' }, (email, password, done) => {\n  User.findOne({ email: email.toLowerCase()\
+    \ }, (err, user) => {\n    if (err) return done(err);\n    if (!user) return done(null, false, { message: 'Invalid credentials'\
+    \ });\n\n    user.comparePassword(password, (err, isMatch) => {\n      if (err) return done(err);\n      if (isMatch)\
+    \ {\n        return done(null, user);\n      } else {\n        return done(null, false, { message: 'Invalid credentials'\
+    \ });\n      }\n    });\n  });\n}));\npassport.serializeUser((user, done) => {\n  done(null, user._id);\n});\npassport.deserializeUser((id,\
+    \ done) => {\n  User.findById(id, function(err, user) {\n    done(err, user);\n  });\n});\n\nmodule.exports = passport;\n\
+    ```\n\n**middleware/auth.js**\n```\nconst jwt = require('jsonwebtoken');\nconst User = require('../models/User');\n\n\
+    module.exports = (req, res, next) => {\n  if (!req.headers.authorization) {\n    return res.status(401).json({ msg: 'No\
+    \ Authorization header provided, authorization denied' });\n  }\n  const authHeaderParts = req.headers.authorization.split('\
+    \ ');\n  if (authHeaderParts.length !== 2 || authHeaderParts[0] !== 'Bearer' || !authHeaderParts[1]) {\n    return res.status(401).json({\
+    \ msg: 'Authorization header must be formatted as \\'Bearer [token]\\'' });\n  }\n\n  const token = authHeaderParts[1];\n\
+    \  if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });\n\n  try {\n    const decoded =\
+    \ jwt.verify(token, process.env.JWT_SECRET);\n    User.findById(decoded.user.id) // Changed from decoded.id to decoded.user.id\n\
+    \      .then((user) => {\n        if (!user) {\n          return res.status(401).json({ msg: 'User not found' });\n  \
+    \      }\n        req.user = user;\n        next();\n      })\n      .catch((err) => {\n        console.error('something\
+    \ wrong with auth middleware');\n        res.status(500).json({ msg: 'Server Error' });\n      });\n  } catch (e) {\n\
+    \    console.error('something wrong with auth middleware');\n    res.status(400).json({ msg: 'Token is not valid' });\n\
+    \  }\n};\n```\n\n**controller/userController.js**\n```\nconst bcrypt = require('bcryptjs');\nconst jwt = require('jsonwebtoken');\n\
+    const User = require('../models/User');\nconst { validationResult } = require('express-validator');\n\nexports.registerUser\
+    \ = async (req, res) => {\n  const errors = validationResult(req);\n  if (!errors.isEmpty()) {\n    return res.status(400).json({\
+    \ errors: errors.array() });\n  }\n\n  const { username, email, password } = req.body;\n\n  try {\n    let user = await\
+    \ User.findOne({ email });\n    if (user) {\n      return res.status(400).json({ errors: [{ msg: 'User already exists'\
+    \ }] });\n    }\n\n    user = new User({ username, email, password });\n\n    await user.save();\n\n    const payload\
+    \ = {\n        user: {\n            id: user.id\n        }\n    };\n\n    const token = jwt.sign(payload, process.env.JWT_SECRET,\
+    \ { expiresIn: '1h' });\n    const userInfo = {\n      id: user._id,\n      username: user.username,\n      email: user.email\n\
+    \    };\n    res.json({ accessToken: token, user: userInfo });\n\n  } catch (err) {\n    console.error(err.message);\n\
+    \    res.status(500).send('Server error');\n  }\n};\n\nexports.loginUser = async (req, res) => {\n  const errors = validationResult(req);\n\
+    \  if (!errors.isEmpty()) {\n    return res.status(400).json({ errors: errors.array() });\n  }\n\n  const { email, password\
+    \ } = req.body;\n\n  try {\n    let user = await User.findOne({ email });\n    if (!user) {\n      return res.status(400).json({\
+    \ errors: [{ msg: 'Invalid credentials' }] });\n    }\n\n    const isMatch = await bcrypt.compare(password, user.password);\n\
+    \    if (!isMatch) {\n      return res.status(400).json({ errors: [{ msg: 'Invalid credentials' }] });\n    }\n\n    const\
+    \ payload = {\n        user: {\n            id: user.id\n        }\n    };\n\n    const token = jwt.sign(payload, process.env.JWT_SECRET,\
+    \ { expiresIn: '1h' });\n    const userInfo = {\n      id: user._id,\n      username: user.username,\n      email: user.email\n\
+    \    };\n    res.json({ accessToken: token, user: userInfo });\n\n  } catch (err) {\n    console.error(err.message);\n\
+    \    res.status(500).send('Server error');\n  }\n};\n```\n\n**routes/api.js**\n```\nconst express = require('express');\n\
+    const router = express.Router();\nconst authMiddleware = require('../middleware/auth');\n\nrouter.get('/protected', authMiddleware,\
+    \ (req, res) => {\n  res.json({ msg: 'This is a protected endpoint.' });\n});\n\nmodule.exports = router;\n\n```\n\n**/README.md**\n\
+    ```\n## Production Secrets Management\n\nFor production deployment, ensure that the `JWT_SECRET` is stored securely and\
+    \ not hardcoded in the `.env` file. Use your platform's secret management service or environment variable configuration\
+    \ to set `JWT_SECRET` securely.\n```\n\n\nNow, your colleague who is testing the app \"AI_HyperLab\" sent you some additional\
+    \ info. Here it is:\n```\nbibop@BibopNewMacBook workspace % curl -X POST -H \"Content-Type: application/json\" -d '{\"\
+    email\":\"testuser@example.com\",\"password\":\"password123\"}' http://localhost:3000/auth/login\n{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjViNmE1ZDhmN2ZlMDRjMjVlYmJmMzhkIn0sImlhdCI6MTcwNzY4MDgyNCwiZXhwIjoxNzA3Njg0NDI0fQ.QpEqVR1Jkuvg9fdABUzJazdkC1AfsprX7GAY9CJGFmI\"\
+    }%        \n(base) bibop@BibopNewMacBook workspace % curl -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjViNmE1ZDhmN2ZlMDRjMjVlYmJmMzhkIn0sImlhdCI6MTcwNzY4MDgyNCwiZXhwIjoxNzA3Njg0NDI0fQ.QpEqVR1Jkuvg9fdABUzJazdkC1AfsprX7GAY9CJGFmI\"\
+    \ http://localhost:3000/api/protected\n{\"msg\":\"This is a protected endpoint.\"}%                                  \
+    \                                                                                                                    \
+    \              \n(base) bibop@BibopNewMacBook workspace % \n```\n\nCan you debug this issue or implement changes to comply\
+    \ with the additional user input?\n\nTell me all the new code that needs to be written or modified to implement current\
+    \ task and have it fully working. You can count that the environment is set up previously and packages listed in files\
+    \ are installed so tell me only commands needed for installation of new dependencies, if there are any.\n\n\n**IMPORTANT**\n\
+    When you think about in which file should the new code go to, always try to make files as small as possible and put code\
+    \ in more smaller files rather than in one big file. Whenever a file becomes too large (more than 50 lines of code) split\
+    \ it into smaller files.\n\n\nYou do not need to make any automated tests work.\n\n**IMPORTANT**\nDo not tell me anything\
+    \ about setting up the database or anything OS related - only if some dependencies need to be installed."
+- role: assistant
+  content: "The input provided by your colleague indicates that the authentication system is functioning correctly. From the\
+    \ logs, the user was able to login successfully and received a JSON Web Token (JWT). The user was also able to access\
+    \ a protected endpoint using the provided JWT, which is the correct behavior for a protected route.\n\nAs for the implementation\
+    \ of the authentication system, according to the code already in place, it seems to be compliant with the goal of the\
+    \ task. However, I noticed that the `auth.js` in the `routes` directory is mixing route handling and authentication logic.\
+    \ To keep the code modular, as per the requirement to write clean and modular code, we should refactor this by moving\
+    \ the authentication logic into the `userController.js` in the `controller` directory.\n\nHere are the changes for refactoring\
+    \ the login logic:\n\n**controller/userController.js**\n```javascript\n// Add necessary import at the top of the file\n\
+    const passport = require('passport');\n\n// Modify loginUser to handle authentication logic\nexports.loginUser = (req,\
+    \ res, next) => {\n  passport.authenticate('local', { session: false }, (err, user, info) => {\n    if (err || !user)\
+    \ {\n      return res.status(400).json({\n        message: info ? info.message : 'Login failed',\n        user: user\n\
+    \      });\n    }\n\n    req.login(user, { session: false }, (err) => {\n      if (err) return res.send(err);\n\n    \
+    \  // Generate the JWT token for the user\n      const payload = {\n        user: {\n          id: user.id\n        }\n\
+    \      };\n\n      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });\n      const userInfo\
+    \ = {\n        id: user._id,\n        username: user.username,\n        email: user.email\n      };\n      return res.json({\
+    \ accessToken: token, user: userInfo });\n    });\n  })(req, res, next);\n};\n```\n\n**routes/auth.js**\n```javascript\n\
+    const router = require('express').Router();\nconst { check, validationResult } = require('express-validator');\nconst\
+    \ userController = require('../controller/userController');\n\n// Define the login route\nrouter.post('/login', [\n  check('email',\
+    \ 'Please include a valid email').isEmail(),\n  check('password', 'Password is required').exists()\n], (req, res, next)\
+    \ => {\n  const errors = validationResult(req);\n  if (!errors.isEmpty()) {\n    return res.status(400).json({ errors:\
+    \ errors.array() });\n  }\n  userController.loginUser(req, res, next); // use the new loginUser method from userController\n\
+    });\n\n// The register route remains unchanged...\n\nmodule.exports = router;\n```\n\nYou do not need to install any new\
+    \ dependencies, as the required packages (`jsonwebtoken`, `passport`, etc.) are already listed in your `package.json`.\
+    \ Ensure that the application is running correctly, and that the implemented user authentication system functions as expected\
+    \ before marking the task as done.\n\nPlease make sure to test the behavior after applying these changes to ensure that\
+    \ everything still works as expected. If the behavior is correct and adheres to the requirements, then the task can be\
+    \ marked as done from both the programmatic and user-review perspective."
+- role: user
+  content: "Ok, now, take your previous message that starts with `The input provided by your` and ends with `the programmatic\
+    \ and user-review perspective.` and convert it to a list of actionable steps that will be executed by a machine. Analyze\
+    \ the entire message, think step by step and make sure that you don't omit any information when converting this message\
+    \ to steps.\n\nEach step can be either:\n\n* `command` - command to run (must be able to run on a Darwin machine, assume\
+    \ current working directory is project root folder)\n* `save_file` -  create new or update ONE existing file; use this\
+    \ if the existing file is smaller than 20 lines or if many lines need to be changed\n* `modify_file` - update ONE existing\
+    \ file; use this if the existing file is larger than 20 lines and only a few lines need to be updated\n\nIf the step is\
+    \ of type `save_file` or `modify_file`, it needs to contain instructions on how to change only ONE file.\n\n**IMPORTANT**:\
+    \ In `code_change_description` field of `modify_file` step, you must provide full information (including code samples,\
+    \ if any) from the previous message, so that the developer can correctly implement the change.  For `save_file`, you MUST\
+    \ include FULL file contents, without omitting anything or adding comments like `// rest of the code goes here`.\n\nExamples:\n\
+    ------------------------example_1---------------------------\n```\n{\n  \"tasks\": [\n    {\n      \"type\": \"modify_file\"\
+    ,\n      \"modify_file\": {\n        \"name\": \"server.js\",\n        \"path\": \"/server.ejs\",\n        \"code_change_description\"\
+    : \"Update code to use port from environment instead of hardcoding it.\\nReplace this line:\\nconst port = 3001;\\nwith\\\
+    nconst port = process.env.PORT || 3001;\\n\",\n      },\n    },\n    {\n      \"type\": \"modify_file\",\n      \"modify_file\"\
+    : {\n        \"name\": \"server.js\",\n        \"path\": \"/server.ejs\",\n        \"code_change_description\": \"Within\
+    \ findByEmail() method of User model, replace `return await User.find({email});` with a try/catch block:\\ntry\\n{  return\
+    \ await User.find({email});\\n} catch (err)\\n{ return null; }\\n\",\n      },\n    },\n    {\n      \"type\": \"save_file\"\
+    ,\n      \"save_file\": {\n        \"name\": \"README.md\",\n        \"path\": \"/README.md\",\n        \"content\": \"\
+    # Example Readme\\n\\nThis is an example readme for the example project.\\n\\nThanks to everyone who contributes to this\
+    \ repository!\\n\"\n      }\n    }\n  ]\n}\n```\n------------------------end_of_example_1---------------------------\n\
+    \nWithin the file modifications, mark any settings that the user must configure manually with `// INPUT_REQUIRED {input_description}`\
+    \ comment,  where `input_description` is a description of what needs to be added here by the user. Use appropriate syntax\
+    \ for comments in the file you're saving. If the file type doesn't support comments (eg JSON), don't add any.\n\nRemember:\
+    \ you must provide all the information (context) for file modification steps that you thought of in the previous message,\
+    \ so that the developer can correctly implement your changes. This is very important!"
+- role: user
+  content: "**IMPORTANT**\nYou must respond with ONLY the JSON object, with NO additional text or explanation.\n\nHere is\
+    \ the schema for the expected JSON object:\n```json\n{\n    \"tasks\": {\n        \"type\": \"array\",\n        \"description\"\
+    : \"List of smaller development steps that need to be done to complete the entire task.\",\n        \"items\": {\n   \
+    \         \"type\": \"object\",\n            \"description\": \"A smaller development step that needs to be done to complete\
+    \ the entire task.  Remember, if you need to run a command that doesn't finish by itself (eg. a command to run an  If\
+    \ you need to create a directory that doesn't exist and is not the root project directory, always create it by running\
+    \ a command `mkdir`\",\n            \"properties\": {\n                \"type\": {\n                    \"type\": \"string\"\
+    ,\n                    \"enum\": [\n                        \"command\",\n                        \"save_file\",\n   \
+    \                     \"modify_file\",\n                        \"human_intervention\"\n                    ],\n     \
+    \               \"description\": \"Type of the development step that needs to be done to complete the entire task.\"\n\
+    \                },\n                \"command\": {\n                    \"type\": \"object\",\n                    \"\
+    description\": \"Command that needs to be run to complete the current task. This should be used only if the task is of\
+    \ a type \\\"command\\\".\",\n                    \"properties\": {\n                        \"command\": {\n        \
+    \                    \"type\": \"string\",\n                            \"description\": \"A single command that needs\
+    \ to be executed.\"\n                        },\n                        \"timeout\": {\n                            \"\
+    type\": \"number\",\n                            \"description\": \"Timeout in milliseconds that represent the approximate\
+    \ time this command takes to finish. If you need to run a command that doesnt't finish by itself (eg. a command to run\
+    \ an app), set the timeout to to a value long enough to determine that it has started successfully and provide a command_id.\
+    \ If you need to create a directory that doesn't exist and is not the root project directory, always create it by running\
+    \ a command `mkdir`\"\n                        },\n                        \"success_message\": {\n                  \
+    \          \"type\": \"string\",\n                            \"description\": \"A message to look for in the output of\
+    \ the command to determine if successful or not.\"\n                        },\n                        \"command_id\"\
+    : {\n                            \"type\": \"string\",\n                            \"description\": \"If the process\
+    \ needs to continue running after the command is executed provide a unique command identifier which you can use to kill\
+    \ the process later.\"\n                        }\n                    },\n                    \"required\": [\n     \
+    \                   \"command\",\n                        \"timeout\"\n                    ]\n                },\n   \
+    \             \"save_file\": {\n                    \"type\": \"object\",\n                    \"description\": \"A file\
+    \ that needs to be created or file that needs to be completely replaced. This should be used for new files.\",\n     \
+    \               \"properties\": {\n                        \"name\": {\n                            \"type\": \"string\"\
+    ,\n                            \"description\": \"Name of the file that needs to be created or replaced.\"\n         \
+    \               },\n                        \"path\": {\n                            \"type\": \"string\",\n         \
+    \                   \"description\": \"Full path of the file (with the file name) that needs to be created or replaced.\"\
+    \n                        },\n                        \"content\": {\n                            \"type\": \"string\"\
+    ,\n                            \"description\": \"Full content of the file that needs to be implemented. Remember, you\
+    \ MUST NOT omit any of the content that should go into this file.\"\n                        }\n                    },\n\
+    \                    \"required\": [\n                        \"name\",\n                        \"path\",\n         \
+    \               \"content\"\n                    ]\n                },\n                \"modify_file\": {\n         \
+    \           \"type\": \"object\",\n                    \"description\": \"A file that should be modified. This should\
+    \ only be used for existing files.\",\n                    \"properties\": {\n                        \"name\": {\n  \
+    \                          \"type\": \"string\",\n                            \"description\": \"Name of the existing\
+    \ file that needs to be updated.\"\n                        },\n                        \"path\": {\n                \
+    \            \"type\": \"string\",\n                            \"description\": \"Full path of the file with the file\
+    \ name that needs to be updated.\"\n                        },\n                        \"code_change_description\": {\n\
+    \                            \"type\": \"string\",\n                            \"description\": \"Detailed description,\
+    \ with code snippets and any relevant context/explanation, of the changes that the developer should do.\"\n          \
+    \              }\n                    },\n                    \"required\": [\n                        \"name\",\n   \
+    \                     \"path\",\n                        \"code_change_description\"\n                    ]\n        \
+    \        },\n                \"human_intervention_description\": {\n                    \"type\": \"string\",\n      \
+    \              \"description\": \"Description of a step in debugging this issue when there is a human intervention needed.\
+    \ This should be used only if the task is of a type \\\"human_intervention\\\".\"\n                }\n            },\n\
+    \            \"required\": [\n                \"type\"\n            ]\n        }\n    }\n}\n```\n\n"
+response: "```json\n{\n  \"tasks\": [\n    {\n      \"type\": \"save_file\",\n      \"save_file\": {\n        \"name\": \"\
+  userController.js\",\n        \"path\": \"/controller/userController.js\",\n        \"content\": \"const bcrypt = require('bcryptjs');\\\
+  nconst jwt = require('jsonwebtoken');\\nconst User = require('../models/User');\\nconst { validationResult } = require('express-validator');\\\
+  nconst passport = require('passport');\\n\\nexports.registerUser = async (req, res) => {\\n  const errors = validationResult(req);\\\
+  n  if (!errors.isEmpty()) {\\n    return res.status(400).json({ errors: errors.array() });\\n  }\\n\\n  const { username,\
+  \ email, password } = req.body;\\n\\n  try {\\n    let user = await User.findOne({ email });\\n    if (user) {\\n      return\
+  \ res.status(400).json({ errors: [{ msg: 'User already exists' }] });\\n    }\\n\\n    user = new User({ username, email,\
+  \ password });\\n\\n    await user.save();\\n\\n    const payload = {\\n        user: {\\n            id: user.id\\n   \
+  \     }\\n    };\\n\\n    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });\\n    const userInfo\
+  \ = {\\n      id: user._id,\\n      username: user.username,\\n      email: user.email\\n    };\\n    res.json({ accessToken:\
+  \ token, user: userInfo });\\n\\n  } catch (err) {\\n    console.error(err.message);\\n    res.status(500).send('Server\
+  \ error');\\n  }\\n};\\n\\nexports.loginUser = (req, res, next) => {\\n  passport.authenticate('local', { session: false\
+  \ }, (err, user, info) => {\\n    if (err || !user) {\\n      return res.status(400).json({\\n        message: info ? info.message\
+  \ : 'Login failed',\\n        user: user\\n      });\\n    }\\n\\n    req.login(user, { session: false }, (err) => {\\n\
+  \      if (err) return res.send(err);\\n\\n      const payload = {\\n        user: {\\n          id: user.id\\n        }\\\
+  n      };\\n\\n      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });\\n      const userInfo\
+  \ = {\\n        id: user._id,\\n        username: user.username,\\n        email: user.email\\n      };\\n      return res.json({\
+  \ accessToken: token, user: userInfo });\\n    });\\n  })(req, res, next);\\n};\\n\"\n      }\n    },\n    {\n      \"type\"\
+  : \"modify_file\",\n      \"modify_file\": {\n        \"name\": \"auth.js\",\n        \"path\": \"/routes/auth.js\",\n \
+  \       \"code_change_description\": \"Refactor the POST /login route handler to use the loginUser function from the userController\
+  \ module:\\nReplace the current POST /login route handling code with the following lines:\\nrouter.post('/login', [\\n \
+  \ check('email', 'Please include a valid email').isEmail(),\\n  check('password', 'Password is required').exists()\\n],\
+  \ (req, res, next) => {\\n  const errors = validationResult(req);\\n  if (!errors.isEmpty()) {\\n    return res.status(400).json({\
+  \ errors: errors.array() });\\n  }\\n  userController.loginUser(req, res, next);\\n});\"\n      }\n    }\n  ]\n}\n```"

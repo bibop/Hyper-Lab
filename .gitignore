@@ -100,12 +100,3 @@ public
 
 # FuseBox cache
 .fusebox/
-
-# Client-side node modules
-/client/node_modules
-
-# React build directory
-/client/build
-
-# Exclude .gpt-pilot directories
-.gpt-pilot/

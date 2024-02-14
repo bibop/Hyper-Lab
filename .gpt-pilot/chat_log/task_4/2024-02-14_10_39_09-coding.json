@@ -1,0 +1,22 @@
+{
+  "endpoint": "OPENAI",
+  "model": "gpt-4-1106-preview",
+  "functions": [
+    {
+      "name": "get_file_to_modify",
+      "description": "File that needs to be modified.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "Path to the file that needs to be modified, relative to the project root."
+          }
+        }
+      }
+    }
+  ],
+  "response": {
+    "file": "controller/userController.js"
+  }
+}

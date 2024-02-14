@@ -1,0 +1,137 @@
+{
+  "endpoint": "OPENAI",
+  "model": "gpt-4-1106-preview",
+  "functions": [
+    {
+      "name": "parse_development_task",
+      "description": "Breaks down the development task into smaller steps that need to be done to implement the entire task.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "description": "List of smaller development steps that need to be done to complete the entire task.",
+            "items": {
+              "type": "object",
+              "description": "A smaller development step that needs to be done to complete the entire task.  Remember, if you need to run a command that doesn't finish by itself (eg. a command to run an  If you need to create a directory that doesn't exist and is not the root project directory, always create it by running a command `mkdir`",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "command",
+                    "save_file",
+                    "modify_file",
+                    "human_intervention"
+                  ],
+                  "description": "Type of the development step that needs to be done to complete the entire task."
+                },
+                "command": {
+                  "type": "object",
+                  "description": "Command that needs to be run to complete the current task. This should be used only if the task is of a type \"command\".",
+                  "properties": {
+                    "command": {
+                      "type": "string",
+                      "description": "A single command that needs to be executed."
+                    },
+                    "timeout": {
+                      "type": "number",
+                      "description": "Timeout in milliseconds that represent the approximate time this command takes to finish. If you need to run a command that doesnt't finish by itself (eg. a command to run an app), set the timeout to to a value long enough to determine that it has started successfully and provide a command_id. If you need to create a directory that doesn't exist and is not the root project directory, always create it by running a command `mkdir`"
+                    },
+                    "success_message": {
+                      "type": "string",
+                      "description": "A message to look for in the output of the command to determine if successful or not."
+                    },
+                    "command_id": {
+                      "type": "string",
+                      "description": "If the process needs to continue running after the command is executed provide a unique command identifier which you can use to kill the process later."
+                    }
+                  },
+                  "required": [
+                    "command",
+                    "timeout"
+                  ]
+                },
+                "save_file": {
+                  "type": "object",
+                  "description": "A file that needs to be created or file that needs to be completely replaced. This should be used for new files.",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the file that needs to be created or replaced."
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "Full path of the file (with the file name) that needs to be created or replaced."
+                    },
+                    "content": {
+                      "type": "string",
+                      "description": "Full content of the file that needs to be implemented. Remember, you MUST NOT omit any of the content that should go into this file."
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "path",
+                    "content"
+                  ]
+                },
+                "modify_file": {
+                  "type": "object",
+                  "description": "A file that should be modified. This should only be used for existing files.",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the existing file that needs to be updated."
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "Full path of the file with the file name that needs to be updated."
+                    },
+                    "code_change_description": {
+                      "type": "string",
+                      "description": "Detailed description, with code snippets and any relevant context/explanation, of the changes that the developer should do."
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "path",
+                    "code_change_description"
+                  ]
+                },
+                "human_intervention_description": {
+                  "type": "string",
+                  "description": "Description of a step in debugging this issue when there is a human intervention needed. This should be used only if the task is of a type \"human_intervention\"."
+                }
+              },
+              "required": [
+                "type"
+              ]
+            }
+          }
+        },
+        "required": [
+          "tasks"
+        ]
+      }
+    }
+  ],
+  "response": {
+    "tasks": [
+      {
+        "type": "modify_file",
+        "modify_file": {
+          "name": "passport.js",
+          "path": "/config/passport.js",
+          "code_change_description": "Replace the passport local strategy callback implementation with async/await syntax. Update the deserializeUser function to also use async/await for consistency.\n\nReplace the entire content of the `/config/passport.js` file with the following code:\n\nconst passport = require('passport');\nconst LocalStrategy = require('passport-local').Strategy;\nconst User = require('../models/User');\n\npassport.use(new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {\n  try {\n    const user = await User.findOne({ email: email.toLowerCase() });\n    if (!user) return done(null, false, { message: 'Invalid credentials' });\n\n    const isMatch = await user.comparePassword(password);\n    if (!isMatch) {\n      return done(null, false, { message: 'Invalid credentials' });\n    }\n    return done(null, user);\n  } catch (err) {\n    return done(err);\n  }\n}));\n\npassport.serializeUser((user, done) => {\n  done(null, user._id);\n});\n\npassport.deserializeUser(async (id, done) => {\n  try {\n    const user = await User.findById(id);\n    done(null, user);\n  } catch (err) {\n    done(err, null);\n  }\n});\n\nmodule.exports = passport;\n"
+        }
+      },
+      {
+        "type": "modify_file",
+        "modify_file": {
+          "name": "User.js",
+          "path": "/models/User.js",
+          "code_change_description": "Update the `comparePassword` method within `/models/User.js` to return a Promise which allows us to use the `async/await` syntax in the passport configuration.\n\nFind the `comparePassword` method and replace it with the following code:\n\n// Method to compare password for authentication, refactored to return a Promise\nUserSchema.methods.comparePassword = function(candidatePassword) {\n  return new Promise((resolve, reject) => {\n    bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {\n      if (err) return reject(err);\n      resolve(isMatch);\n    });\n  });\n};\n"
+        }
+      }
+    ]
+  }
+}
