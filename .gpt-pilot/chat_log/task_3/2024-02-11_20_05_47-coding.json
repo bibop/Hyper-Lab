@@ -1,0 +1,176 @@
+{
+  "endpoint": "OPENAI",
+  "model": "gpt-4-1106-preview",
+  "functions": [
+    {
+      "name": "parse_development_task",
+      "description": "Breaks down the development task into smaller steps that need to be done to implement the entire task.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "description": "List of smaller development steps that need to be done to complete the entire task.",
+            "items": {
+              "type": "object",
+              "description": "A smaller development step that needs to be done to complete the entire task.  Remember, if you need to run a command that doesn't finish by itself (eg. a command to run an  If you need to create a directory that doesn't exist and is not the root project directory, always create it by running a command `mkdir`",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "command",
+                    "save_file",
+                    "modify_file",
+                    "human_intervention"
+                  ],
+                  "description": "Type of the development step that needs to be done to complete the entire task."
+                },
+                "command": {
+                  "type": "object",
+                  "description": "Command that needs to be run to complete the current task. This should be used only if the task is of a type \"command\".",
+                  "properties": {
+                    "command": {
+                      "type": "string",
+                      "description": "A single command that needs to be executed."
+                    },
+                    "timeout": {
+                      "type": "number",
+                      "description": "Timeout in milliseconds that represent the approximate time this command takes to finish. If you need to run a command that doesnt't finish by itself (eg. a command to run an app), set the timeout to to a value long enough to determine that it has started successfully and provide a command_id. If you need to create a directory that doesn't exist and is not the root project directory, always create it by running a command `mkdir`"
+                    },
+                    "success_message": {
+                      "type": "string",
+                      "description": "A message to look for in the output of the command to determine if successful or not."
+                    },
+                    "command_id": {
+                      "type": "string",
+                      "description": "If the process needs to continue running after the command is executed provide a unique command identifier which you can use to kill the process later."
+                    }
+                  },
+                  "required": [
+                    "command",
+                    "timeout"
+                  ]
+                },
+                "save_file": {
+                  "type": "object",
+                  "description": "A file that needs to be created or file that needs to be completely replaced. This should be used for new files.",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the file that needs to be created or replaced."
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "Full path of the file (with the file name) that needs to be created or replaced."
+                    },
+                    "content": {
+                      "type": "string",
+                      "description": "Full content of the file that needs to be implemented. Remember, you MUST NOT omit any of the content that should go into this file."
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "path",
+                    "content"
+                  ]
+                },
+                "modify_file": {
+                  "type": "object",
+                  "description": "A file that should be modified. This should only be used for existing files.",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the existing file that needs to be updated."
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "Full path of the file with the file name that needs to be updated."
+                    },
+                    "code_change_description": {
+                      "type": "string",
+                      "description": "Detailed description, with code snippets and any relevant context/explanation, of the changes that the developer should do."
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "path",
+                    "code_change_description"
+                  ]
+                },
+                "human_intervention_description": {
+                  "type": "string",
+                  "description": "Description of a step in debugging this issue when there is a human intervention needed. This should be used only if the task is of a type \"human_intervention\"."
+                }
+              },
+              "required": [
+                "type"
+              ]
+            }
+          }
+        },
+        "required": [
+          "tasks"
+        ]
+      }
+    }
+  ],
+  "response": {
+    "tasks": [
+      {
+        "type": "command",
+        "command": {
+          "command": "npm install passport passport-local passport-jwt",
+          "timeout": 120000
+        }
+      },
+      {
+        "type": "modify_file",
+        "modify_file": {
+          "name": "User.js",
+          "path": "/models/User.js",
+          "code_change_description": "Add a method to the 'UserSchema' for comparing a given password with the stored password hash:\nUserSchema.methods.comparePassword = function(candidatePassword, cb) {\n  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {\n    if (err) return cb(err);\n    cb(null, isMatch);\n  });\n};"
+        }
+      },
+      {
+        "type": "save_file",
+        "save_file": {
+          "name": "passport.js",
+          "path": "/config/passport.js",
+          "content": "const passport = require('passport');\nconst LocalStrategy = require('passport-local').Strategy;\nconst User = require('../models/User');\n\npassport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {\n  User.findOne({ email: email.toLowerCase() }, (err, user) => {\n    if (err) return done(err);\n    if (!user) return done(null, false, { message: 'Invalid credentials' });\n\n    user.comparePassword(password, (err, isMatch) => {\n      if (err) return done(err);\n      if (isMatch) {\n        return done(null, user);\n      } else {\n        return done(null, false, { message: 'Invalid credentials' });\n      }\n    });\n  });\n}));\npassport.serializeUser((user, done) => {\n  done(null, user._id);\n});\npassport.deserializeUser((id, done) => {\n  User.findById(id, function(err, user) {\n    done(err, user);\n  });\n});\n\nmodule.exports = passport;"
+        }
+      },
+      {
+        "type": "modify_file",
+        "modify_file": {
+          "name": "index.js",
+          "path": "/index.js",
+          "code_change_description": "Add Passport initialization before centralized routing module:\nconst passport = require('./config/passport');\n\n// Initialize Passport\napp.use(passport.initialize());\n\n// Middleware for parsing JSON and urlencoded form data\napp.use(express.json());\napp.use(express.urlencoded({ extended: true }));"
+        }
+      },
+      {
+        "type": "save_file",
+        "save_file": {
+          "name": "auth.js",
+          "path": "/middleware/auth.js",
+          "content": "const jwt = require('jsonwebtoken');\nconst User = require('../models/User');\n\nmodule.exports = (req, res, next) => {\n  const token = req.header('Authorization').replace('Bearer ', '');\n  if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });\n\n  try {\n    const decoded = jwt.verify(token, process.env.JWT_SECRET);\n    User.findById(decoded.id)\n      .then((user) => {\n        if (!user) {\n          return res.status(401).json({ msg: 'User not found' });\n        }\n        req.user = user;\n        next();\n      })\n      .catch((err) => {\n        console.error('something wrong with auth middleware');\n        res.status(500).json({ msg: 'Server Error' });\n      });\n  } catch (e) {\n    console.error('something wrong with auth middleware');\n    res.status(400).json({ msg: 'Token is not valid' });\n  }\n};"
+        }
+      },
+      {
+        "type": "modify_file",
+        "modify_file": {
+          "name": "auth.js",
+          "path": "/routes/auth.js",
+          "code_change_description": "Modify the login route to use Passport for authentication:\nrouter.post('/login', (req, res, next) => {\n  passport.authenticate('local', { session: false }, (err, user, info) => {\n    if (err) return next(err);\n\n    if (!user) {\n      return res.status(400).json(info);\n    }\n    const payload = { id: user.id };\n    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '5h' }, (err, token) => {\n      if (err) return res.status(500).json({ msg: 'Error signing token' });\n      res.json({ token: 'Bearer ' + token });\n    });\n  })(req, res, next);\n});\n\n// Rest of the auth.js routes\n"
+        }
+      },
+      {
+        "type": "modify_file",
+        "modify_file": {
+          "name": "index.js",
+          "path": "/index.js",
+          "code_change_description": "Remove or comment out the test-user routes registration:\n// Remove or comment the following line:\n// app.use('/test-user', require('./routes/testUserRoutes'));"
+        }
+      }
+    ]
+  }
+}

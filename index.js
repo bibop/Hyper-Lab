@@ -1,43 +1,32 @@
 const express = require('express');
-const mongoose = require('mongoose');
+require('dotenv').config();
+const connectDB = require('./config/database');
 
 const app = express();
-const mongoose = require('mongoose');
-const databaseConfig = require('./config/database');
-const User = require('./models/User');
 
 // Database Connection
-mongoose.connect(databaseConfig.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-.then(() => console.log('MongoDB Connected'))
-.catch(err => console.log(err));
+connectDB().catch(err => console.log(err));
 
-// Test Endpoint to Create and Retrieve a Dummy User
-app.get('/test-user', async (req, res) => {
-  try {
-    // Create a dummy user
-    const dummyUser = new User({
-      username: 'testuser',
-      email: 'testuser@example.com',
-      password: 'password' // Note: In production, this would be hashed
-    });
+const passport = require('./config/passport');
 
-    // Save dummy user in the database
-    await dummyUser.save();
+// Initialize Passport
+app.use(passport.initialize());
 
-    // Retrieve the dummy user from the database
-    const foundUser = await User.findOne({ username: 'testuser' });
-    res.status(200).json(foundUser);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
+// Middleware for parsing JSON and urlencoded form data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const port = process.env.PORT || 3000;
+// Centralized Routing Module
+const setupRoutes = require('./routes');
+setupRoutes(app);
+// app.use('/test-user', require('./routes/testUserRoutes'));
 
-app.get('/ping', (req, res) => {
-  res.status(200).send('OK');
-});
+// Error handling middleware
+const errorHandler = require('./middleware/errorHandler');
+app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+const PORT = process.env.PORT || 3001;
+console.log('Attempting to listen on port', PORT);
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
