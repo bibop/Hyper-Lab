@@ -100,3 +100,10 @@ public
 
 # FuseBox cache
 .fusebox/
+
+# Pilot files
+.gpt-pilot/
+
+# Client-specific dependencies
+client/package-lock.json
+client/package.json
