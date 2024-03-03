@@ -7,23 +7,36 @@
     "test": "tests"
   },
   "scripts": {
-    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "check-user": "node scripts/checkUser.js"
+    "start": "node index.js",
+    "check-user": "node scripts/checkUser.js",
+    "client-install": "cd client && npm install"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@tensorflow/tfjs-node": "^3.6.0",
+    "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
-    "dotenv": "^16.4.1",
+    "bootstrap": "^5.3.2",
+    "dotenv": "^16.4.4",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
+    "i18next": "^23.8.2",
+    "i18next-browser-languagedetector": "^7.2.0",
+    "i18next-http-backend": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.1.1",
     "mongoose-unique-validator": "^5.0.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "react-dropzone": "^14.2.3",
+    "react-i18next": "^14.0.5",
+    "react-redux": "^9.1.0",
+    "redux": "^5.0.1",
+    "redux-thunk": "^3.1.0",
+    "socket.io": "^4.7.4"
   }
 }
